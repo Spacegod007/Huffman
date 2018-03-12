@@ -19,11 +19,12 @@ public class HuffmanEncoder implements IEncoder<String>
     }
 
     @Override
-    public String decode(File location) throws IOException
+    public String decode(File file, File keyfile) throws IOException
     {
-        BitSet bitSet = readFileToBitSet(location);
+        BitSet bitSet = readFileToBitSet(file);
+        Tree key = readKeyFile(keyfile);
 
-        return null;
+        return decodeMessage(bitSet, key);
     }
 
     private Tree buildTree(String text)
@@ -98,18 +99,65 @@ public class HuffmanEncoder implements IEncoder<String>
 
     private void writeToFile(File file, Tree tree, BitSet bitSet) throws IOException
     {
-        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(bufferedOutputStream))
+        File keyFile = new File(file.getName() + ".key");
+
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(keyFile))))
         {
             objectOutputStream.writeObject(tree);
-            objectOutputStream.flush();
-            bufferedOutputStream.write(bitSet.toByteArray());
-            bufferedOutputStream.flush();
         }
+
+        Files.write(file.toPath(), bitSet.toByteArray());
+    }
+
+    private Tree readKeyFile(File keyfile) throws IOException
+    {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(keyfile))))
+        {
+            Object object = objectInputStream.readObject();
+
+            if (object instanceof Tree)
+            {
+                return (Tree) object;
+            }
+        }
+        catch (ClassNotFoundException ignored)
+        { }
+
+        throw new InvalidClassException("Incorrect object found, object is not an instance of Tree");
     }
 
     private BitSet readFileToBitSet(File file) throws IOException
     {
         return BitSet.valueOf(Files.readAllBytes(file.toPath()));
+    }
+
+    private String decodeMessage(BitSet bitSet, Tree key)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < bitSet.length() - 1;)
+        {
+            Tree temp = key;
+
+            while (temp instanceof Node)
+            {
+                Node node = (Node) temp;
+                if (!bitSet.get(i))
+                {
+                    temp = node.getLeftTree();
+                }
+                else
+                {
+                    temp = node.getRightTree();
+                }
+
+                i++;
+            }
+
+
+            builder.append(((Leaf) key).getValue());
+        }
+
+        return builder.toString();
     }
 }

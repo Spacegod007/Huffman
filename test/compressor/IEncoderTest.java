@@ -7,9 +7,13 @@ import org.junit.jupiter.api.TestFactory;
 
 import java.io.File;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class IEncoderTest
 {
+    private static final Logger LOGGER = Logger.getLogger(IEncoderTest.class.getName());
+
     private static HuffmanEncoder huffmanCompressor;
 
     private static String testText10K;
@@ -43,13 +47,19 @@ class IEncoderTest
     void encode() throws Exception
     {
         huffmanCompressor.encode("this is a random test text which got manually written", new File("testText"));
-//        huffmanCompressor.encode(testText10K, new File("10k"));
-//        huffmanCompressor.encode(testText1M, new File("1m"));
+        huffmanCompressor.encode(testText10K, new File("10k"));
+        huffmanCompressor.encode(testText1M, new File("1m"));
     }
 
     @Test
     void decode() throws Exception
     {
+        String resultTestText = huffmanCompressor.decode(new File("testText"), new File("testText.key"));
+        String result10k = huffmanCompressor.decode(new File("10k"), new File("10k.key"));
+        String result1m = huffmanCompressor.decode(new File("1m"), new File("1m.key"));
 
+        LOGGER.log(Level.INFO, "result test text: " + resultTestText);
+        LOGGER.log(Level.INFO, "result 10k text: " + result10k);
+        LOGGER.log(Level.INFO, "result 1m text: " + result1m);
     }
 }
