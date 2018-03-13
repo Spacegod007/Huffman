@@ -121,6 +121,8 @@ public class HuffmanEncoder implements IEncoder<String>
             }
         }
 
+        bitSet.set(position);
+
         return bitSet;
     }
 
@@ -187,7 +189,7 @@ public class HuffmanEncoder implements IEncoder<String>
     {
         StringBuilder builder = new StringBuilder();
 
-        for (int i = 0; i < bitSet.length();)
+        for (int i = 0; i < bitSet.length() - 1;)
         {
             Tree temp = key;
 
