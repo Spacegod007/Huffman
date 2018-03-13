@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 class IEncoderPerformanceTest
 {
     private static final Logger LOGGER = Logger.getLogger(IEncoderPerformanceTest.class.getName());
+    private static final int testAmount = 5;
 
     private static IEncoder<String> huffmanEncodder;
 
@@ -58,8 +59,6 @@ class IEncoderPerformanceTest
     @Test
     void encode() throws Exception
     {
-        int testAmount = 7;
-
         Long[] times = new Long[testAmount];
         for (int i = 0; i < testAmount; i++)
         {
@@ -86,8 +85,6 @@ class IEncoderPerformanceTest
     @Test
     void decode() throws Exception
     {
-        int testAmount = 7;
-
         Long[] times = new Long[testAmount];
         for (int i = 0; i < testAmount; i++)
         {
