@@ -38,10 +38,7 @@ public class HuffmanEncoder implements IEncoder<String>
 
         while (treeQueue.size() > 1)
         {
-            Tree node1 = treeQueue.remove();
-            Tree node2 = treeQueue.remove();
-
-            treeQueue.add(new Node(node1, node2));
+            treeQueue.add(new Node(treeQueue.remove(), treeQueue.remove()));
         }
 
         return treeQueue.remove();
@@ -66,6 +63,7 @@ public class HuffmanEncoder implements IEncoder<String>
         if (tree instanceof Leaf)
         {
             map.put(((Leaf) tree).getValue(), bitString);
+            System.out.printf("%s - %s%n", ((Leaf) tree).getValue(), bitString);
         }
         else
         {
@@ -106,7 +104,11 @@ public class HuffmanEncoder implements IEncoder<String>
             objectOutputStream.writeObject(tree);
         }
 
-        Files.write(file.toPath(), bitSet.toByteArray());
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
+        {
+            objectOutputStream.writeObject(bitSet);
+        }
+//        Files.write(file.toPath(), bitSet.toByteArray());
     }
 
     private Tree readKeyFile(File keyfile) throws IOException
@@ -128,34 +130,42 @@ public class HuffmanEncoder implements IEncoder<String>
 
     private BitSet readFileToBitSet(File file) throws IOException
     {
-        return BitSet.valueOf(Files.readAllBytes(file.toPath()));
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file))))
+        {
+            return (BitSet) objectInputStream.readObject();
+        } catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+
+//        return BitSet.valueOf(Files.readAllBytes(file.toPath()));
     }
 
     private String decodeMessage(BitSet bitSet, Tree key)
     {
         StringBuilder builder = new StringBuilder();
 
-        for (int i = 0; i < bitSet.length() - 1;)
+        for (int i = 0; i < bitSet.length();)
         {
             Tree temp = key;
 
-            while (temp instanceof Node)
+            while (temp.getClass().equals(Node.class))
             {
                 Node node = (Node) temp;
                 if (!bitSet.get(i))
                 {
-                    temp = node.getLeftTree();
+                    temp = node.getRightTree();
                 }
                 else
                 {
-                    temp = node.getRightTree();
+                    temp = node.getLeftTree();
                 }
 
                 i++;
             }
 
-
-            builder.append(((Leaf) key).getValue());
+            builder.append(((Leaf) temp).getValue());
         }
 
         return builder.toString();

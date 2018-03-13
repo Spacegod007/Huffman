@@ -1,6 +1,8 @@
 package compressor.huffman;
 
-public class Leaf extends Tree
+import java.io.Serializable;
+
+public class Leaf extends Tree implements Serializable
 {
     private final char value;
 

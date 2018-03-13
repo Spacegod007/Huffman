@@ -46,20 +46,18 @@ class IEncoderPerformanceTest
     @Test
     void encode() throws Exception
     {
-        huffmanCompressor.encode("this is a random test text which got manually written", new File("testText"));
-        huffmanCompressor.encode(testText10K, new File("10k"));
-        huffmanCompressor.encode(testText1M, new File("1m"));
+        huffmanCompressor.encode("Hello world", new File("testText"));
+//        huffmanCompressor.encode(testText10K, new File("10k"));
+//        huffmanCompressor.encode(testText1M, new File("1m"));
     }
 
     @Test
     void decode() throws Exception
     {
         String resultTestText = huffmanCompressor.decode(new File("testText"), new File("testText.key"));
-        String result10k = huffmanCompressor.decode(new File("10k"), new File("10k.key"));
-        String result1m = huffmanCompressor.decode(new File("1m"), new File("1m.key"));
+//        String result10k = huffmanCompressor.decode(new File("10k"), new File("10k.key"));
+//        String result1m = huffmanCompressor.decode(new File("1m"), new File("1m.key"));
 
         LOGGER.log(Level.INFO, "result test text: " + resultTestText);
-        LOGGER.log(Level.INFO, "result 10k text: " + result10k);
-        LOGGER.log(Level.INFO, "result 1m text: " + result1m);
     }
 }
