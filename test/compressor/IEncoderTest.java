@@ -38,6 +38,7 @@ class IEncoderTest
     void encodingTest() throws Exception
     {
         encode();
+        decode();
     }
 
     private void encode() throws Exception
