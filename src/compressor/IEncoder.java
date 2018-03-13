@@ -3,6 +3,10 @@ package compressor;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Generic encoder interface
+ * @param <T> object type to be encoded
+ */
 public interface IEncoder<T>
 {
     /**
