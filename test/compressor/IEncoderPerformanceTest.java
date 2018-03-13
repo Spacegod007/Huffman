@@ -10,9 +10,9 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class IEncoderTest
+class IEncoderPerformanceTest
 {
-    private static final Logger LOGGER = Logger.getLogger(IEncoderTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IEncoderPerformanceTest.class.getName());
 
     private static HuffmanEncoder huffmanCompressor;
 
