@@ -9,20 +9,20 @@ import java.util.*;
 public class HuffmanEncoder implements IEncoder<String>
 {
     @Override
-    public void encode(String compressable, File location) throws IOException
+    public void encode(String compressible, File location) throws IOException
     {
-        Tree tree = buildTree(compressable);
+        Tree tree = buildTree(compressible);
         Map<Character, String> codeMapping = getTreeCodes(tree);
-        BitSet bitSet = encodeMessage(codeMapping, compressable);
+        BitSet bitSet = encodeMessage(codeMapping, compressible);
 
         writeToFile(location, tree, bitSet);
     }
 
     @Override
-    public String decode(File file, File keyfile) throws IOException
+    public String decode(File file, File keyFile) throws IOException
     {
         BitSet bitSet = readFileToBitSet(file);
-        Tree key = readKeyFile(keyfile);
+        Tree key = readKeyFile(keyFile);
 
         return decodeMessage(bitSet, key);
     }
@@ -63,7 +63,6 @@ public class HuffmanEncoder implements IEncoder<String>
         if (tree instanceof Leaf)
         {
             map.put(((Leaf) tree).getValue(), bitString);
-            System.out.printf("%s - %s%n", ((Leaf) tree).getValue(), bitString);
         }
         else
         {
@@ -73,19 +72,19 @@ public class HuffmanEncoder implements IEncoder<String>
         }
     }
 
-    private BitSet encodeMessage(Map<Character, String> codeMapping, String compressable)
+    private BitSet encodeMessage(Map<Character, String> codeMapping, String compressible)
     {
         int position = 0;
         BitSet bitSet = new BitSet();
 
-        for (char character : compressable.toCharArray())
+        for (char character : compressible.toCharArray())
         {
             String s = codeMapping.get(character);
             for (char c : s.toCharArray())
             {
                 if (c == '1')
                 {
-                    bitSet.set(position, true);
+                    bitSet.set(position);
                 }
 
                 position++;
@@ -104,16 +103,12 @@ public class HuffmanEncoder implements IEncoder<String>
             objectOutputStream.writeObject(tree);
         }
 
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
-        {
-            objectOutputStream.writeObject(bitSet);
-        }
-//        Files.write(file.toPath(), bitSet.toByteArray());
+        Files.write(file.toPath(), bitSet.toByteArray());
     }
 
-    private Tree readKeyFile(File keyfile) throws IOException
+    private Tree readKeyFile(File keyFile) throws IOException
     {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(keyfile))))
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(keyFile))))
         {
             Object object = objectInputStream.readObject();
 
@@ -123,23 +118,14 @@ public class HuffmanEncoder implements IEncoder<String>
             }
         }
         catch (ClassNotFoundException ignored)
-        { }
+        { /* result will be handled outside of this class due to thrown exception */ }
 
         throw new InvalidClassException("Incorrect object found, object is not an instance of Tree");
     }
 
     private BitSet readFileToBitSet(File file) throws IOException
     {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file))))
-        {
-            return (BitSet) objectInputStream.readObject();
-        } catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-
-//        return BitSet.valueOf(Files.readAllBytes(file.toPath()));
+        return BitSet.valueOf(Files.readAllBytes(file.toPath()));
     }
 
     private String decodeMessage(BitSet bitSet, Tree key)
@@ -150,17 +136,10 @@ public class HuffmanEncoder implements IEncoder<String>
         {
             Tree temp = key;
 
-            while (temp.getClass().equals(Node.class))
+            while (temp instanceof Node)
             {
                 Node node = (Node) temp;
-                if (!bitSet.get(i))
-                {
-                    temp = node.getRightTree();
-                }
-                else
-                {
-                    temp = node.getLeftTree();
-                }
+                temp = bitSet.get(i) ? node.getLeftTree() : node.getRightTree();
 
                 i++;
             }
@@ -171,3 +150,4 @@ public class HuffmanEncoder implements IEncoder<String>
         return builder.toString();
     }
 }
+

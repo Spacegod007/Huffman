@@ -6,7 +6,7 @@ public class Tree implements Comparable<Tree>, Serializable
 {
     private final int frequency;
 
-    public Tree(int frequency)
+    Tree(int frequency)
     {
         this.frequency = frequency;
     }
@@ -17,7 +17,7 @@ public class Tree implements Comparable<Tree>, Serializable
         return this.frequency - other.frequency;
     }
 
-    public int getFrequency()
+    int getFrequency()
     {
         return frequency;
     }

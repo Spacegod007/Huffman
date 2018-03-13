@@ -2,7 +2,7 @@ package compressor.huffman;
 
 import java.io.Serializable;
 
-public class Node extends Tree implements Serializable
+class Node extends Tree implements Serializable
 {
     private final Tree leftTree;
     private final Tree rightTree;

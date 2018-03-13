@@ -2,7 +2,7 @@ package compressor.huffman;
 
 import java.io.Serializable;
 
-public class Leaf extends Tree implements Serializable
+class Leaf extends Tree implements Serializable
 {
     private final char value;
 
