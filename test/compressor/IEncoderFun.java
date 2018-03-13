@@ -20,15 +20,22 @@ class IEncoderFun
     }
 
     @Test
+    void testCode() throws Exception
+    {
+        encode();
+        decode();
+    }
+
     void encode() throws Exception
     {
         encoder.encode(text, new File("JustForFun"));
     }
 
-    @Test
     void decode() throws Exception
     {
-        encoder.decode(new File("JustForFun"), new File("JustForFun.key"));
+        String message = encoder.decode(new File("JustForFun"), new File("JustForFun.key"));
+
+        System.out.println(message);
     }
 
 }
