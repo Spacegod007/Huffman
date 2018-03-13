@@ -16,7 +16,7 @@ class IEncoderFun
     static void setup()
     {
         encoder = new HuffmanEncoder();
-        text = "a";
+        text = "ab";
     }
 
     @Test
