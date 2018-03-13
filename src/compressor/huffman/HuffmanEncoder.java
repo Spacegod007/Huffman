@@ -6,6 +6,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 
+/**
+ * A class which encodes/decodes a message
+ */
 public class HuffmanEncoder implements IEncoder<String>
 {
     @Override
@@ -27,6 +30,11 @@ public class HuffmanEncoder implements IEncoder<String>
         return decodeMessage(bitSet, key);
     }
 
+    /**
+     * Builds a tree of nodes and leaves to make codes
+     * @param text on which the tree is based
+     * @return a tree containing nodes and leaves
+     */
     private Tree buildTree(String text)
     {
         List<Character> characters = getCharacterListFromString(text);
@@ -44,6 +52,11 @@ public class HuffmanEncoder implements IEncoder<String>
         return treeQueue.remove();
     }
 
+    /**
+     * Converts a string to a list of characters
+     * @param string to create a list out of
+     * @return an abstract list object bound to the string
+     */
     private List<Character> getCharacterListFromString(final String string) {
         return new AbstractList<Character>() {
             public int size() { return string.length(); }
@@ -51,6 +64,11 @@ public class HuffmanEncoder implements IEncoder<String>
         };
     }
 
+    /**
+     * Creates codes out of the tree with characters
+     * @param tree to create a code mapping out of
+     * @return a mapping of characters bound to a code written as string
+     */
     private Map<Character,String> getTreeCodes(Tree tree)
     {
         Map<Character, String> map = new HashMap<>();
@@ -58,6 +76,12 @@ public class HuffmanEncoder implements IEncoder<String>
         return map;
     }
 
+    /**
+     * Generates a code specific for the tree object
+     * @param tree location from where decisions are made
+     * @param map to bind the character to a bit-combination
+     * @param bitString the combination of bits found
+     */
     private void generateCode(Tree tree, Map<Character, String> map, String bitString)
     {
         if (tree instanceof Leaf)
@@ -72,6 +96,12 @@ public class HuffmanEncoder implements IEncoder<String>
         }
     }
 
+    /**
+     * Encodes the message according to the bit combination
+     * @param codeMapping character to bit-combination code mapping
+     * @param compressible the message which is going to be encrypted
+     * @return a BitSet object containing the encoded message
+     */
     private BitSet encodeMessage(Map<Character, String> codeMapping, String compressible)
     {
         int position = 0;
@@ -94,6 +124,13 @@ public class HuffmanEncoder implements IEncoder<String>
         return bitSet;
     }
 
+    /**
+     * Writes the encrypted message to a file and creates a key file
+     * @param file to write the encrypted message to
+     * @param tree to create a key file out of
+     * @param bitSet to write in the encrypted file
+     * @throws IOException if something goes wrong while writing the file
+     */
     private void writeToFile(File file, Tree tree, BitSet bitSet) throws IOException
     {
         File keyFile = new File(file.getName() + ".key");
@@ -106,6 +143,12 @@ public class HuffmanEncoder implements IEncoder<String>
         Files.write(file.toPath(), bitSet.toByteArray());
     }
 
+    /**
+     * Reads the key file
+     * @param keyFile to get the tree out of
+     * @return a Tree object which is linked to the encrypted file
+     * @throws IOException if something goes wrong while reading the key file
+     */
     private Tree readKeyFile(File keyFile) throws IOException
     {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(keyFile))))
@@ -123,11 +166,23 @@ public class HuffmanEncoder implements IEncoder<String>
         throw new InvalidClassException("Incorrect object found, object is not an instance of Tree");
     }
 
+    /**
+     * Reads the BitSet file to get the encrypted data
+     * @param file to read the encrypted data out of
+     * @return a BitSet object containing the encrypted data
+     * @throws IOException if something goes wrong while reading the file
+     */
     private BitSet readFileToBitSet(File file) throws IOException
     {
         return BitSet.valueOf(Files.readAllBytes(file.toPath()));
     }
 
+    /**
+     * decodes the encoded message
+     * @param bitSet containing the encoded message
+     * @param key which links specific bit combinations to a character
+     * @return the decoded message
+     */
     private String decodeMessage(BitSet bitSet, Tree key)
     {
         StringBuilder builder = new StringBuilder();
